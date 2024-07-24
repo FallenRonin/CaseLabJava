@@ -24,7 +24,7 @@
 
 **Добавление нового файла в базу** -
 POST localhost:8082/api/files\
-body:\
+body(JSON):\
 {\
 "text": "0J/RgNC40LLQtdGCINC80LjRgA==",\
 "title": "Hello world text",\
