@@ -12,6 +12,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
 class FileServiceTest {
 
     HttpClient client;
@@ -44,6 +45,28 @@ class FileServiceTest {
         HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 
         assertEquals(200, response.statusCode());
+    }
+
+    @Test
+    void WhenNewFileCreatedItMustBePossibleToBeDeletedByItsID() throws Exception{
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("text", "0J/RgNC40LLQtdGCINC80LjRgA==" );
+        jsonObject.put("title", "Hello world text" );
+        jsonObject.put("creation_date", "2024-24-07T13:00:00" );
+        jsonObject.put("description", "Test file" );
+
+        HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
+                .POST(BodyPublishers.ofString(jsonObject.toString()))
+                .uri(URI.create("http://localhost:8082/api/files")).build();
+        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+
+        HttpRequest request1 = HttpRequest.newBuilder().DELETE()
+                .uri(URI.create("http://localhost:8082/api/files/" + response.body())).build();
+        HttpResponse<String> response1 = client.send(request1, BodyHandlers.ofString());
+
+        assertEquals(200, response1.statusCode());
+
     }
 
     @Test

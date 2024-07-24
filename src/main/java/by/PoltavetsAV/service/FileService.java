@@ -15,7 +15,6 @@ public class FileService {
 
     private final FileRepository fileRepository;
 
-
     public File create(FileDTO dto) {
         File file = File.builder()
                 .text(dto.getText())
@@ -30,12 +29,16 @@ public class FileService {
         return fileRepository.findAll();
     }
 
-    public File readByID(Long id){
+    public File readByID(Long id) {
         return fileRepository.findById(id).orElse(null);
     }
 
-    public void delete(Long id) {
-        fileRepository.deleteById(id);
+    public boolean delete(Long id) {
+        if (fileRepository.existsById(id)) {
+            fileRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
 }

@@ -37,8 +37,9 @@ public class FileController {
     }
 
     @DeleteMapping("/{id}")
-    public HttpStatus delete(@PathVariable Long id) {
-        fileService.delete(id);
-        return HttpStatus.OK;
+    public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
+
+        HttpStatus fileFound = fileService.delete(id) ? HttpStatus.OK : HttpStatus.NOT_FOUND;
+        return new ResponseEntity<>(fileFound);
     }
 }
