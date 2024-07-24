@@ -1,55 +1,69 @@
 package by.PoltavetsAV.service;
 
-import by.PoltavetsAV.dto.FileDTO;
-import by.PoltavetsAV.repository.FileRepository;
+import org.json.JSONObject;
 import org.junit.jupiter.api.*;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.net.http.HttpRequest.BodyPublishers;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Date;
-
-//@Transactional
-
 class FileServiceTest {
 
-    FileRepository fileRepository;
-    FileService fileService;
+    HttpClient client;
 
     @BeforeEach
-    void setUp() {
-        fileService = new FileService(fileRepository);
+    void setUp(){
+        client = HttpClient.newBuilder().build();
     }
 
     @Test
-    void whenCreateNewFileMustReturnSomeID() {
-        FileDTO fileDTO = new FileDTO();
-        fileDTO.setText("aGVsbG8gd29ybGQh");// Hello world!
-        fileDTO.setTitle("Hello world text");
-        fileDTO.setDescription("File that contains \"Hello world!\" text");
-        fileDTO.setCreation_date(new Date());
+    void isAPIALiveAtAll() throws Exception{
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:8082/api/files")).build();
+        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+        assertEquals(200, response.statusCode());
+    }
 
-        assertNull(fileService.create(fileDTO));
+
+    @Test
+    void whenCreateNewFileMustReturnSomeID() throws Exception {
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("text", "0J/RgNC40LLQtdGCINC80LjRgA==" );
+        jsonObject.put("title", "Hello world text" );
+        jsonObject.put("creation_date", "2024-24-07T13:00:00" );
+        jsonObject.put("description", "Test file" );
+
+        HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
+                .POST(BodyPublishers.ofString(jsonObject.toString()))
+                .uri(URI.create("http://localhost:8082/api/files")).build();
+        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+
+        assertEquals(200, response.statusCode());
     }
 
     @Test
-    void readAll() {
-    }
+    void whenCreatedNewFileRequestByItsIDMustNotBe404() throws Exception {
 
-    @Test
-    void readByID() {
-    }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("text", "0J/RgNC40LLQtdGCINC80LjRgA==" );
+        jsonObject.put("title", "Hello world text" );
+        jsonObject.put("creation_date", "2024-24-07T13:00:00" );
+        jsonObject.put("description", "Test file" );
 
-    @Test
-    void update() {
-    }
+        HttpRequest request = HttpRequest.newBuilder().setHeader("Content-Type", "application/json")
+                .POST(BodyPublishers.ofString(jsonObject.toString()))
+                .uri(URI.create("http://localhost:8082/api/files")).build();
+        HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
 
-    @Test
-    void delete() {
-    }
+        HttpRequest request1 = HttpRequest.newBuilder().GET()
+                .uri(URI.create("http://localhost:8082/api/files/" + response.body())).build();
+        HttpResponse<String> response1 = client.send(request1, BodyHandlers.ofString());
 
-    @AfterEach
-    public void close(){
-        fileService = null;
+        assertEquals(200, response1.statusCode());
     }
-
 }
