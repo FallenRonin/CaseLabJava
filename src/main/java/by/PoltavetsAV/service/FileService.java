@@ -34,10 +34,6 @@ public class FileService {
         return fileRepository.findById(id).orElse(null);
     }
 
-    public File update(File file) {
-        return fileRepository.save(file);
-    }
-
     public void delete(Long id) {
         fileRepository.deleteById(id);
     }
