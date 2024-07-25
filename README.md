@@ -20,9 +20,9 @@
 Тестировать можно через **Postman**.\
 **Получение всех файлов из базы** - GET localhost:8082/api/files
 
-**Получение конкретного файла по ID** - GET localhost:8082/api/files/1
+**Получение конкретного файла по ID = 1** - GET localhost:8082/api/files/1
 
-**Удаление конкретного файла по ID** - DELETE localhost:8082/api/files/1
+**Удаление конкретного файла по ID = 1** - DELETE localhost:8082/api/files/1
 
 **Добавление нового файла в базу** -
 POST localhost:8082/api/files\
